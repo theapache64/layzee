@@ -1,0 +1,41 @@
+{
+  "name": "layzee",
+  "version": "1.0.0",
+  "description": "An automated work reporter",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/theapache64/layzee.git"
+  },
+  "keywords": [
+    "work",
+    "report",
+    "automated",
+    "work",
+    "report",
+    "git",
+    "work",
+    "report",
+    "lazy",
+    "work",
+    "report"
+  ],
+  "author": "theapache64",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/theapache64/layzee/issues"
+  },
+  "homepage": "https://github.com/theapache64/layzee#readme",
+  "devDependencies": {
+    "@types/node": "^10.3.1",
+    "@types/node-notifier": "0.0.28",
+    "@types/nodemailer": "^4.6.0"
+  },
+  "dependencies": {
+    "node-notifier": "^5.2.1",
+    "nodemailer": "latest"
+  }
+}
