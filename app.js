@@ -36,7 +36,7 @@ var Layzee = /** @class */ (function () {
         log.push("\nGenerating report from " + from + " to " + to + "\n");
         var report = [];
         report.push("Hi sir, ");
-        report.push("Below given my work report from <b>" + from + " 06:00PM " + Layzee.DAYS[yesterdayDate.getDay()] + "</b> to <b> " + to + " 06:00PM " + Layzee.DAYS[todayDate.getDay()] + " </b>\n\n");
+        report.push("Below given my work report from <b>" + yesterday + " 06:00PM " + Layzee.DAYS[yesterdayDate.getDay()] + "</b> to <b> " + today + " 06:00PM " + Layzee.DAYS[todayDate.getDay()] + " </b>\n\n");
         var hasAtleastOneProjectReport = false;
         //Looping through each project
         for (var _i = 0, _a = layzeeConfig.projects; _i < _a.length; _i++) {

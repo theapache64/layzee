@@ -65,7 +65,7 @@ class Layzee {
         const report: string[] = [];
 
         report.push("Hi sir, ");
-        report.push(`Below given my work report from <b>${from} 06:00PM ${Layzee.DAYS[yesterdayDate.getDay()]}</b> to <b> ${to} 06:00PM ${Layzee.DAYS[todayDate.getDay()]} </b>\n\n`);
+        report.push(`Below given my work report from <b>${yesterday} 06:00PM ${Layzee.DAYS[yesterdayDate.getDay()]}</b> to <b> ${today} 06:00PM ${Layzee.DAYS[todayDate.getDay()]} </b>\n\n`);
 
         let hasAtleastOneProjectReport = false;
 
