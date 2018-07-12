@@ -1,0 +1,22 @@
+{
+  "name": "YOUR-NAME",
+  "author": "YOUR-GIT-USERNAME",
+  "log_send_to": "YOUR-MAIL",
+  "send_from": {
+    "host": "EMAIL-HOST",
+    "port": "EMAIL-PORT",
+    "username": "EMAIL-ADDRESS",
+    "password": "EMAIL-PASSWORD"
+  },
+  "send_to": "YOUR-SUPERIOR-EMAIL-ID",
+  "cc": [
+    "COLLEAGUE-EMAIL-ID",
+    "COLLEAGUE-EMAIL-ID"
+  ],
+  "projects": [
+    {
+      "name": "YOUR-PROECT-NAME",
+      "path": "YOUR-PROJECT-PATH"
+    }
+  ]
+}
