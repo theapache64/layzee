@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {execSync} from "child_process";
+import { execSync } from "child_process";
 import nodemailer from 'nodemailer';
 import notifier from 'node-notifier';
 
@@ -40,7 +40,7 @@ class Layzee {
 
         const log: Array<string> = [];
 
-        const {layzeeConfig} = Layzee;
+        const { layzeeConfig } = Layzee;
 
         console.log("Running layzeee...");
         log.push(`Initialized with ${JSON.stringify(layzeeConfig)}`);
@@ -161,7 +161,7 @@ class Layzee {
                                 title: '❌ Failed to sent Work Report LOG',
                                 message: `✉️ ${error}`
                             });
-                        }else{
+                        } else {
 
                             console.log('Log sent: %s', info.messageId);
 
