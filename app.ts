@@ -30,7 +30,7 @@ interface Log {
 
 class Layzee {
 
-    private static readonly DATA_FILE_PATH = `${__dirname}/log.json`;
+    private static readonly DATA_FILE_PATH = `${__dirname}/data.json`;
     private static readonly INITIAL_COMMIT = 'Initial Commit';
 
     //Loading config
@@ -53,6 +53,7 @@ class Layzee {
         const { layzeeConfig } = Layzee;
 
         console.log("Running layzeee...");
+        console.log('-------------------')
 
         log.push(`Initialized with ${JSON.stringify(layzeeConfig)}`);
 
@@ -118,6 +119,11 @@ class Layzee {
             report.push("Please note that the work report only contains major projects' milestones, other miscellaneous time records are not included. (eg: Research, Meetings etc)");
             report.push(`\n\nFaithfully,\n${layzeeConfig.name}.`);
             console.log(report.join("\n"));
+
+            console.log('-------------------\n');
+            console.log('##############################')
+            console.log('Please wait, we are sending the report for you ...');
+            console.log('##############################')
 
 
             const from = `${layzeeConfig.name} <${layzeeConfig.send_from.username}>`;
