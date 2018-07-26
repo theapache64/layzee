@@ -23,12 +23,18 @@ interface LazyConfig {
     projects: Project[]
 }
 
+interface Log {
+    last_report_sent_date_time: string
+}
+
 class Layzee {
 
     //Report command
 
     //Loading config
     private static readonly layzeeConfig: LazyConfig = JSON.parse(fs.readFileSync(`${__dirname}/layzeeconfig.json`, "utf-8"));
+    private static readonly lastReportSentLog: Log = JSON.parse(fs.readFileSync(`${__dirname}/log.json`, "utf-8"));
+
     private static readonly DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     private static getReportCommand = (from: string, to: string) => {
@@ -43,12 +49,21 @@ class Layzee {
         const { layzeeConfig } = Layzee;
 
         console.log("Running layzeee...");
+
         log.push(`Initialized with ${JSON.stringify(layzeeConfig)}`);
+
 
         //Unformatted
         const todayDate = new Date();
         const yesterdayDate = new Date(todayDate.toDateString());
         yesterdayDate.setDate(todayDate.getDate() - 1);
+
+        let lastTime = Layzee.lastReportSentLog.last_report_sent_date_time;
+        if (!lastTime) {
+            // No last time so minus 1 day = lastTime
+            lastTime = Layzee.toYYYMMDDWithTime(yesterdayDate);
+        }
+        console.log('Last report sent : ', lastTime);
 
         //Formatted
         const today = Layzee.toYYYMMDD(todayDate);
@@ -67,7 +82,7 @@ class Layzee {
         report.push("Hi sir, ");
         report.push(`Below given my work report from <b>${yesterday} 06:00PM ${Layzee.DAYS[yesterdayDate.getDay()]}</b> to <b> ${today} 06:00PM ${Layzee.DAYS[todayDate.getDay()]} </b>\n\n`);
 
-        let hasAtleastOneProjectReport = false;
+        let hasAtLeastOneProjectReport = false;
 
         //Looping through each project
         for (const project of layzeeConfig.projects) {
@@ -79,7 +94,7 @@ class Layzee {
 
                 if (result) {
 
-                    hasAtleastOneProjectReport = true;
+                    hasAtLeastOneProjectReport = true;
 
                     //Title
                     const title = `<h3>Project : ${project.name}</h3>`;
@@ -104,7 +119,7 @@ class Layzee {
         }
 
         //Checking if at least one project report exist
-        if (hasAtleastOneProjectReport) {
+        if (hasAtLeastOneProjectReport) {
 
             //Ending
             report.push("Please note that the work report only contains major projects' milestones, other miscellaneous time records are not included. (eg: Research, Meetings etc)");
@@ -193,21 +208,20 @@ class Layzee {
 
     };
 
-
-    private static getRepeated = (data: string, repeat: number) => {
-        const arr: string[] = [];
-        for (let i = 0; i < repeat; i++) {
-            arr.push(data);
-        }
-        return arr.join("");
-    };
-
     private static toYYYMMDD = (date: Date) => {
         function zeroPad(number: number) {
             return number > 9 ? number : `0${number}`;
         }
 
         return `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())}`;
+    }
+
+    private static toYYYMMDDWithTime = (date: Date) => {
+        function zeroPad(number: number) {
+            return number > 9 ? number : `0${number}`;
+        }
+
+        return `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())} ${date.getHours()}:${date.getMinutes()}`;
     }
 }
 
