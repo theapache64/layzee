@@ -2,6 +2,7 @@ import fs from 'fs';
 import { execSync } from "child_process";
 import nodemailer from 'nodemailer';
 import notifier from 'node-notifier';
+import { TimeManager } from './TimeManager';
 
 interface Project {
     name: string;
@@ -29,16 +30,19 @@ interface Log {
 
 class Layzee {
 
-    //Report command
+    private static readonly DATA_FILE_PATH = `${__dirname}/log.json`;
+    private static readonly INITIAL_COMMIT = 'Initial Commit';
 
     //Loading config
     private static readonly layzeeConfig: LazyConfig = JSON.parse(fs.readFileSync(`${__dirname}/layzeeconfig.json`, "utf-8"));
-    private static readonly lastReportSentLog: Log = JSON.parse(fs.readFileSync(`${__dirname}/log.json`, "utf-8"));
+    private static readonly lastReportSentLog: Log = JSON.parse(fs.readFileSync(Layzee.DATA_FILE_PATH, "utf-8"));
 
     private static readonly DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    private static getReportCommand = (from: string, to: string) => {
-        return `git log --after="${from}" --before="${to}" --author=${Layzee.layzeeConfig.author} --format="# %s (%ad)" --date=format:"%I:%M:%S:%p"`;
+    private static getReportCommand = (from: string | null, to: string) => {
+        const fromDate = from ? `--after="${from}"` : '';
+        const toDate = `--before="${to}"`;
+        return `git log ${fromDate} ${toDate} --author=${Layzee.layzeeConfig.author} --format="# %s (%ad)" --date=format:"%I:%M:%S:%p"`;
     };
 
 
@@ -52,35 +56,24 @@ class Layzee {
 
         log.push(`Initialized with ${JSON.stringify(layzeeConfig)}`);
 
+        const logObject = Layzee.lastReportSentLog;
+        const timeMan = new TimeManager(logObject.last_report_sent_date_time);
 
-        //Unformatted
-        const todayDate = new Date();
-        const yesterdayDate = new Date(todayDate.toDateString());
-        yesterdayDate.setDate(todayDate.getDate() - 1);
+        log.push("\nFrom: ", timeMan.lastTimeFmNotNull);
+        log.push("To: ", timeMan.nowFm);
 
-        let lastTime = Layzee.lastReportSentLog.last_report_sent_date_time;
-        if (!lastTime) {
-            // No last time so minus 1 day = lastTime
-            lastTime = Layzee.toYYYMMDDWithTime(yesterdayDate);
-        }
-        console.log('Last report sent : ', lastTime);
+        log.push(`\nGenerating report from ${timeMan.lastTimeFmNotNull} to ${timeMan.nowFm}\n`);
 
-        //Formatted
-        const today = Layzee.toYYYMMDD(todayDate);
-        const yesterday = Layzee.toYYYMMDD(yesterdayDate);
+        const commitsFrom = timeMan.lastTime
+            ? `${timeMan.lastTimeFm} ${Layzee.DAYS[timeMan.lastTime.getDay()]}`
+            : timeMan.lastTimeFmNotNull;
 
-        log.push("\nToday: ", today);
-        log.push("yesterday: ", yesterday);
-
-        const from = `${yesterday} 18:00`;
-        const to = `${today} 18:00`;
-
-        log.push(`\nGenerating report from ${from} to ${to}\n`);
+        const commitsTo = `${timeMan.nowFm} ${Layzee.DAYS[timeMan.now.getDay()]}`;
 
         const report: string[] = [];
 
         report.push("Hi sir, ");
-        report.push(`Below given my work report from <b>${yesterday} 06:00PM ${Layzee.DAYS[yesterdayDate.getDay()]}</b> to <b> ${today} 06:00PM ${Layzee.DAYS[todayDate.getDay()]} </b>\n\n`);
+        report.push(`Below given my work report from <b>${commitsFrom}</b> to <b> ${commitsTo} </b>\n\n`);
 
         let hasAtLeastOneProjectReport = false;
 
@@ -90,7 +83,7 @@ class Layzee {
             try {
 
                 //Getting report
-                const result = execSync(`cd ${project.path} && ${Layzee.getReportCommand(from, to)}`).toString();
+                const result = execSync(`cd ${project.path} && ${Layzee.getReportCommand(timeMan.lastTimeFm, timeMan.nowFm)}`).toString();
 
                 if (result) {
 
@@ -128,7 +121,7 @@ class Layzee {
 
 
             const from = `${layzeeConfig.name} <${layzeeConfig.send_from.username}>`;
-            const subject = `Work Report - ${today} / ${Layzee.DAYS[todayDate.getDay()]}`;
+            const subject = `Work Report - ${timeMan.lastTimeFmNotNull} / ${Layzee.DAYS[timeMan.now.getDay()]}`;
             const mailBody = report.join("<br/>").replace(/\n/g, "<br/>");
 
             log.push("\nMailBody: \n\n");
@@ -178,6 +171,10 @@ class Layzee {
                             });
                         } else {
 
+                            // Update last sent time here
+                            logObject.last_report_sent_date_time = timeMan.now.toISOString();
+                            fs.writeFileSync(Layzee.DATA_FILE_PATH, JSON.stringify(logObject));
+
                             console.log('Log sent: %s', info.messageId);
 
                             notifier.notify({
@@ -207,22 +204,6 @@ class Layzee {
         }
 
     };
-
-    private static toYYYMMDD = (date: Date) => {
-        function zeroPad(number: number) {
-            return number > 9 ? number : `0${number}`;
-        }
-
-        return `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())}`;
-    }
-
-    private static toYYYMMDDWithTime = (date: Date) => {
-        function zeroPad(number: number) {
-            return number > 9 ? number : `0${number}`;
-        }
-
-        return `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())} ${date.getHours()}:${date.getMinutes()}`;
-    }
 }
 
 
