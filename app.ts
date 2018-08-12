@@ -1,7 +1,7 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import { execSync } from "child_process";
-import nodemailer from 'nodemailer';
-import notifier from 'node-notifier';
+import * as nodemailer from 'nodemailer';
+import * as notifier from 'node-notifier';
 import { TimeManager } from './TimeManager';
 
 interface Project {
