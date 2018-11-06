@@ -39,16 +39,22 @@ class Layzee {
 
     private static readonly DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    private static getReportCommand = (from: string | null, to: string) => {
+    private static getReportCommand = (from: string | null, to: string, grepVal: string | null) => {
         const fromDate = from ? `--after="${from}"` : '';
         const toDate = `--before="${to}"`;
-        return `git log ${fromDate} ${toDate} --author=${Layzee.layzeeConfig.author} --format="# %s (%ad)" --date=format:"%I:%M:%S:%p"`;
+        const grep = grepVal != null ? `--grep="${grepVal}" -i` : '';
+        const command = `git log ${grep} ${fromDate} ${toDate} --author=${Layzee.layzeeConfig.author} --format="# %s (%ad)" --date=format:"%I:%M:%S:%p"`;
+        console.log('Executing : ', command);
+        return command;
     };
 
 
     public static run = () => {
 
         const log: Array<string> = [];
+        const args: string[] = process.argv.slice(2);
+        const grepVal = args.length != 0 ? args[0].split("=")[1] : null;
+
 
         const { layzeeConfig } = Layzee;
 
@@ -84,7 +90,7 @@ class Layzee {
             try {
 
                 //Getting report
-                const result = execSync(`cd ${project.path} && ${Layzee.getReportCommand(timeMan.lastTimeFm, timeMan.nowFm)}`).toString();
+                const result = execSync(`cd ${project.path} && ${Layzee.getReportCommand(timeMan.lastTimeFm, timeMan.nowFm, grepVal)}`).toString();
 
                 if (result) {
 
