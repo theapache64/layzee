@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { execSync } from "child_process";
 import * as nodemailer from 'nodemailer';
-import * as notifier from 'node-notifier';
+import notifier from 'node-notifier';
 import { TimeManager } from './TimeManager';
 
 interface Project {
@@ -133,7 +133,7 @@ class Layzee {
 
 
             const from = `${layzeeConfig.name} <${layzeeConfig.send_from.username}>`;
-            const subject = `Work Report - ${timeMan.lastTimeFmNotNull} / ${Layzee.DAYS[timeMan.now.getDay()]}`;
+            const subject = `Work Report - ${timeMan.nowFm} / ${Layzee.DAYS[timeMan.now.getDay()]}`;
             const mailBody = report.join("<br/>").replace(/\n/g, "<br/>");
 
             log.push("\nMailBody: \n\n");
