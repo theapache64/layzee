@@ -35,7 +35,7 @@
     "@types/nodemailer": "^4.6.0"
   },
   "dependencies": {
-    "node-notifier": "^5.2.1",
+    "node-notifier": "^8.0.1",
     "nodemailer": "latest"
   }
 }
